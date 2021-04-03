@@ -1,14 +1,21 @@
 defmodule Cards do
   @moduledoc """
 
-    Learn about frequently used Modules such as Enum and List, Comprehensions.
+    Provides methods for creating and handling a deck of cards.
+
+    Learn about frequently used Modules such as Enum and List, Comprehensions. Atoms.
+    Atoms are one of Elixir's primitive data types.
     Pattern matching is elixir's replacement for variable assignment.
     Pattern matching is used anytime that we use the '=' sign and not just returing something
     from an expression.
+    Pipe operator expects the developer to write methods that take in consistent first arguements.
   """
+@doc """
+  Returns a list of strings, representing a deck of playing cards
 
+"""
   def create_deck do
-    values = ["Ace", "Two", "Three", "Four", "Five"]
+    values = ["Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"]
     suits = ["Spades", "Clubs", "Hearts", "Diamonds"]
 
     for suit <- suits, value <- values do
@@ -24,7 +31,19 @@ defmodule Cards do
     Enum.member?(deck, card)
   end
 
-  def deal(deck, hand_size) do 
+  @doc """
+  Divides a deck into a hand and the remainder of the deck.
+  The `handsize` arguement indicates how many cards should be returned.
+
+  ## Examples
+
+        iex> deck = Cards.create_deck
+        iex> {hand, deck} = Cards.deal(deck, 1)
+        iex> hand
+        ["Ace of Spades"]
+
+  """
+  def deal(deck, hand_size) do
     Enum.split(deck, hand_size)
   end
 
@@ -34,7 +53,15 @@ defmodule Cards do
   end
 
   def load(filename) do
-  {status, binary} = File.read(filename)
-  :erlang.binary_to_term(binary)
+    case File.read(filename) do
+      {:ok, binary} -> :erlang.binary_to_term(binary)
+      {:error, _reason} -> "File does not exist"
+    end
+  end
+
+  def create_hand(hand_size) do
+    Cards.create_deck
+    |> Cards.shuffle
+    |> Cards.deal(hand_size)
   end
 end
